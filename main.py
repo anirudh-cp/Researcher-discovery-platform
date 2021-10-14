@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 
 import xlwt as wb
 
+import re
+from urllib.parse import quote
+
 
 def scrape_scholar(term):
     term = '+'.join(x for x in term)
@@ -40,6 +43,18 @@ def scrape_scholar(term):
     return results, sci_dir
 
 
+def sanitize(text):
+    data = '+'.join(quote(x) for x in text.split())
+    return data
+
+
+def get_uni(text):
+    data = text.split(',')
+    for term in data:
+        if term.find('University') > 0:
+            return term
+
+
 def scrape_sci_dir(url):
     headers_ = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
                               'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -47,6 +62,19 @@ def scrape_sci_dir(url):
 
     req = requests.get(url, headers=headers_)
     soup = BeautifulSoup(req.content, 'lxml')
+
+    script = soup.find('script', {"type":"application/json"})
+    script = str(script)
+    pattern = r"\{\"#name\":\"label\",\"_\":\"\w\"\},\{\"#name\":\"textfn\",\"_\":\"[\w*\s*,*]*\"\}"
+    data_full = re.findall(pattern, script, re.M)
+
+    qualification = {}
+    for term in data_full:
+        data = term.split('},{')
+        qualification[data[0].split(':')[-1].replace('"','')] = \
+            data[1].split(':')[-1].replace('"','').replace('}', '')
+
+    #print(qualification)
 
     author_group = soup.find("div", {"class": "AuthorGroups text-xs"})
 
@@ -59,27 +87,22 @@ def scrape_sci_dir(url):
             get_text(strip=True)
         surname = author.find("span", {"class": "text surname"}).\
             get_text(strip=True)
+        ref = author.find("span", {"class": "author-ref"}).get_text(strip=True)
 
-        surname_ = '+'.join(x for x in surname.split())
-        given_name_ = '+'.join(x for x in given_name.split())
-        url = f'https://www.scopus.com/results/authorNamesList.uri?sort=' \
-              f'count-f&src=al&sid=acfa3b8cd0930cf6959c274e5064754a&sot=' \
-              f'al&sdt=al&sl=43&s=AUTHLASTNAME%28{surname_}%29+AND+AUTHFIRST' \
-              f'%28{given_name_}%29&st1={surname_}' \
-              f'&st2={given_name_}&orcidId=' \
-              f'&selectionPageSearch=anl&reselectAuthor=false&activeFlag=' \
-              f'true&showDocument=false&resultsPerPage=20&offset=1&jtp=false' \
-              f'&currentPage=1&previousSelectionCount=0&tooManySelections' \
-              f'=false&previousResultCount=0&authSubject=LFSC&authSubject' \
-              f'=HLSC&authSubject=PHSC&authSubject=SOSC&exactAuthorSearch' \
-              f'=false&showFullList=false&authorPreferredName=&origin=' \
-              f'searchauthorfreelookup'
-        results.append([given_name, surname, url])
+        surname_ = sanitize(surname)
+        given_name_ = sanitize(given_name)
+        uni = get_uni(qualification[ref])
+        uni_ = sanitize(uni)
+
+        url = f'https://www.scopus.com/results/authorNamesList.uri?sort=count-f&src=al&affilName={uni_}&sid=3356f44acd1842874e123cc86b8004b0&sot=al&sdt=al&sl=88&s=AUTHLASTNAME%28{surname_}%29+AND+AUTHFIRST%28{given_name_}%29+AND+AFFIL%28{uni_}%29&st1={surname_}&st2={given_name_}'
+
+        results.append([given_name, surname, qualification[ref], url])
 
     return results
 
 
 def main():
+    '''
     term = input('Enter search term : ').split()
     # term = ['Apple', 'ice']
 
@@ -111,6 +134,12 @@ def main():
             line += 1
 
     work_book.save('Results.xls')
+    '''
+
+    people = scrape_sci_dir('https://www.sciencedirect.com/science/article/pii/S0260877420303605')
+
+    for a in people:
+        print(a)
 
 
 if __name__ == '__main__':
