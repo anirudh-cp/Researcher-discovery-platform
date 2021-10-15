@@ -1,0 +1,74 @@
+.header {
+    padding: 40px;
+    text-align: center;
+    background: #1abc9c;
+    color: white;
+    font-size: 25px;
+    font-family: Calibri, sans-serif;
+    background: #005C97;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #363795, #005C97);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #363795, #005C97); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+body {
+    width: 100%;
+    margin:0;
+    background: #ECE9E6;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #FFFFFF, #ECE9E6);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #FFFFFF, #ECE9E6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+} /* Remove body margins */
+
+.container {
+    width: 100%;
+    position: absolute;
+    top: 42%;
+    -moz-transform: translateY(-42%);
+    -webkit-transform: translateY(-42%);
+    transform: translateY(-42%);
+}
+
+.text {
+    width: 45%;
+    font-family: Calibri, sans-serif;
+    font-size: 18px;
+}
+
+.button {
+    font-family: Calibri, sans-serif;
+    font-size: 18px;
+}
+
+.foot {
+    position: relative;
+    font-family: Calibri, sans-serif;
+    bottom: 5px;
+}
+
+.table  {
+    width: 90%;
+    border-collapse: collapse;
+    font-family: Calibri, sans-serif;
+    font-size: 16px;
+}
+
+th, td {
+    border-style: ridge;
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
+    border-right: 0.5px solid black;
+    border-left: 0.5px solid black;
+    padding-left: 5px;
+
+}
+
+tr:hover {
+    background-color: #A7BFE8;
+}
+
+.table_head {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Researcher Discovery Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1> Researcher Discovery Platform</h1>
+    </div>
+    <br>
+    <br>
+    <div>
+        <form action="http://localhost:5000/query" method="post"
+              class="container">
+            <center class="container">
+                <input type="text" id="query" name="query"
+                       placeholder="Enter a Domain" class="text">
+                <button name="search" type="submit"
+                        class="button">Search</button>
+            </center>
+        </form>
+    </div>
+
+    <div class="foot" style="position: absolute;">V1, Front</div>
+</body>
+</html>
+

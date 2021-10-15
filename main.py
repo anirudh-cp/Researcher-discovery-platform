@@ -30,9 +30,7 @@ def main():
 
     work_book.save('Results.xls')
 
-    # TODO: Code refactor
     # TODO: IEEE and Carnegie Mellon Scraping
-    # TODO: Front end
 
     '''
     people = scrape_sci_dir('https://www.sciencedirect.com/science/'
@@ -43,5 +41,22 @@ def main():
     '''
 
 
+def main_process(term):
+    term = term.split()
+    # term = ['Apple', 'ice']
+
+    results, sci_dir = scrape_scholar(term)
+
+    data = []
+    for res in sci_dir:
+        people = scrape_sci_dir(res[1])
+        for person in people:
+            data.append(person)
+
+    return data
+
+
+'''
 if __name__ == '__main__':
     main()
+'''
