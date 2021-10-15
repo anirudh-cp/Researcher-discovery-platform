@@ -48,11 +48,29 @@ def sanitize(text):
     return data
 
 
-def get_uni(text):
-    data = text.split(',')
-    for term in data:
-        if term.find('University') > 0:
-            return term
+def get_uni(qualification, ref):
+    for term in ref:
+        text = qualification[term]
+        data = text.split(',')
+        for segment in data:
+            if segment.find('University') > 0:
+                return segment
+
+
+def get_ref(author):
+    res = []
+    for auth in author.find_all("span", {"class": "author-ref"}):
+        val = auth.get_text(strip=True)
+        if val.isalpha():
+            res.append(val)
+    return res
+
+
+def get_qualifications(qualification, ref):
+    out = ''
+    for term in ref:
+        out = out + qualification[term] + '; '
+    return out[:-2]
 
 
 def scrape_sci_dir(url):
@@ -65,14 +83,20 @@ def scrape_sci_dir(url):
 
     script = soup.find('script', {"type":"application/json"})
     script = str(script)
-    pattern = r"\{\"#name\":\"label\",\"_\":\"\w\"\},\{\"#name\":\"textfn\",\"_\":\"[\w*\s*,*]*\"\}"
+
+    pattern = r"(?:\{\"#name\":\"label\",\"_\":\"\w\"\},)*\{\"#name\":\"textfn\",(?:\"\$\":\{\"id\":\"[\w\d]*\"\},)*\"_\":\"(?:[A-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ]*\s*\.*\d*,*-*&*\(*\)*)*\"\}"
     data_full = re.findall(pattern, script, re.M)
+    data_full = set(data_full)
 
     qualification = {}
     for term in data_full:
         data = term.split('},{')
-        qualification[data[0].split(':')[-1].replace('"','')] = \
-            data[1].split(':')[-1].replace('"','').replace('}', '')
+
+        if len(data) > 1:
+            qualification[data[0].split(':')[-1].replace('"','')] = \
+                data[1].split(':')[-1].replace('"','').replace('}', '')
+        else:
+            qualification['0'] = data[0].split(':')[-1].replace('"','').replace('}', '')
 
     #print(qualification)
 
@@ -87,24 +111,31 @@ def scrape_sci_dir(url):
             get_text(strip=True)
         surname = author.find("span", {"class": "text surname"}).\
             get_text(strip=True)
-        ref = author.find("span", {"class": "author-ref"}).get_text(strip=True)
+
+        if len(qualification) > 1:
+            ref = get_ref(author)
+        else:
+            ref = '0'
 
         surname_ = sanitize(surname)
         given_name_ = sanitize(given_name)
-        uni = get_uni(qualification[ref])
-        uni_ = sanitize(uni)
+        uni = get_uni(qualification, ref)
 
-        url = f'https://www.scopus.com/results/authorNamesList.uri?sort=count-f&src=al&affilName={uni_}&sid=3356f44acd1842874e123cc86b8004b0&sot=al&sdt=al&sl=88&s=AUTHLASTNAME%28{surname_}%29+AND+AUTHFIRST%28{given_name_}%29+AND+AFFIL%28{uni_}%29&st1={surname_}&st2={given_name_}'
+        if uni is not None:
+            uni_ = sanitize(uni)
+            url = f'https://www.scopus.com/results/authorNamesList.uri?sort=count-f&src=al&affilName={uni_}&sid=3356f44acd1842874e123cc86b8004b0&sot=al&sdt=al&sl=88&s=AUTHLASTNAME%28{surname_}%29+AND+AUTHFIRST%28{given_name_}%29+AND+AFFIL%28{uni_}%29&st1={surname_}&st2={given_name_}'
+        else:
+            url = f'https://www.scopus.com/results/authorNamesList.uri?sort=count-f&src=al&sid=77ff2eb1a3f81dea6930fea81b3366ee&sot=al&sdt=al&sl=43&s=AUTHLASTNAME%28{surname_}%29+AND+AUTHFIRST%28{given_name_}%29&st1={surname_}&st2={given_name_}'
 
-        results.append([given_name, surname, qualification[ref], url])
+        results.append([given_name, surname,
+                        get_qualifications(qualification, ref), url])
 
     return results
 
 
 def main():
-    '''
     term = input('Enter search term : ').split()
-    # term = ['Apple', 'ice']
+    #term = ['Apple', 'ice']
 
     work_book = wb.Workbook(encoding='utf-8')
     table = work_book.add_sheet('Results')
@@ -125,8 +156,14 @@ def main():
     table.write(0, 2, 'Search Link')
     line = 1
 
+    for x in sci_dir:
+        print(x)
+
     for res in sci_dir:
         people = scrape_sci_dir(res[1])
+        for x in people:
+            print(x)
+
         for person in people:
             table.write(line, 0, person[0])
             table.write(line, 1, person[1])
@@ -134,13 +171,17 @@ def main():
             line += 1
 
     work_book.save('Results.xls')
+
+    # TODO: Code refactor
+    # TODO: IEEE and Carnegie Mellon Scraping
+    # TODO: Front end
+
     '''
-
-    people = scrape_sci_dir('https://www.sciencedirect.com/science/article/pii/S0260877420303605')
-
-    for a in people:
-        print(a)
-
+    people = scrape_sci_dir('https://www.sciencedirect.com/science/article/abs/pii/S0308814619319661')
+    print('out')
+    for x in people:
+        print(x)
+    '''
 
 if __name__ == '__main__':
     main()
