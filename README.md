@@ -1,8 +1,5 @@
 # Researcher Discovery Platform
 
-Find researchers in a given domain. The researchers are selected by the taking the top papers from Google Scholars and then cross-referencing their names and qualifications in the publication website.
+Find researchers in a given domain. The researchers are selected by the taking the top papers from various sources and then providing them a profile if possible.
 
-### Version 1 Goals:
-- Scrape at least 2 websites.
-- Display the data in a user friendly front end.
-- Provide Scopus profile links if possible. At least a link for a direct author search.
+### Phased Action Plan: https://docs.google.com/spreadsheets/d/1i6i9iF8VlAs-dtCMKXw9RciYvbw49PXG/edit?usp=sharing&ouid=110106369203063786592&rtpof=true&sd=true
