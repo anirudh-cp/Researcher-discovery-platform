@@ -3,24 +3,31 @@ Module for Scrapers and associated helper functions.
 
 Available scrapers:
 -------------------
-scrape_scholar      : Google Scholar    :   Get all title and URL and titles
-                                            and URL for Science Direct pages.
+scrape_scholar          : Google Scholar    :   Get all title and URL and titles and URL for Science Direct pages.
 
-scrape_sci_dir_page : Science Direct    :   Get first name, last name,
-                                            qualifications and SCOPUS query
-                                            link for each author.
+scrape_sci_dir_source   : Science Direct    :   Get URLs from Science Direct search results.
 
-scrape_ACM_source   : ACM               :   Get URLs from ACM search results.
+scrape_sci_dir_page     : Science Direct    :   Get first name, last name, qualifications and SCOPUS query link for each author.
 
-scrape_ACM_page     : ACM               :   Get first name, last name,
-                                            qualifications and ACM profile
-                                            link for each author.
+scrape_ACM_source       : ACM               :   Get URLs from ACM search results.
+
+scrape_ACM_page         : ACM               :   Get first name, last name, qualifications and ACM profile link for each author.
+
+TODO: Yet to implement: IEEE, Carnegie Mellon, Dimensions, IITs, NITs, IIITs
+
 """
 
 # For scrapers
 import requests
 from bs4 import BeautifulSoup
 # import lxml
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import selenium.common.exceptions as selenium_exec
+
 
 # For helper functions
 import re
@@ -111,6 +118,91 @@ def scrape_scholar(term):
     return results, sci_dir
 
 
+def scrape_sci_dir_source(term):
+    """ Scrape the ACM search results page and returns paper name and URL. """
+
+    # Create URL to scrape.
+    term = '+'.join(x for x in term)
+
+    # print(term)
+
+    url = f'https://www.sciencedirect.com/search?qs={term}&lastSelectedFacet=articleTypes&articleTypes=FLA'
+
+    # Use Selenium here as the web page is built with JavaScript.
+    # We have to wait for everything to render, hence we use this tool.
+    options = webdriver.ChromeOptions()
+
+    '''
+    options.add_argument("--headless")
+    options.add_argument('--window-size=1920,1080')
+    options.add_argument("--allow-insecure-localhost");
+    options.add_argument("--disable-gpu");
+    options.add_argument("--no-sandbox");
+    '''
+
+    # options.add_argument("--headless")
+    # options.add_argument("--start-minimized")
+
+    options.add_argument("--headless")
+    headers_ = {'User-Agent': 'Mozilla/5.0 (Windows NT 4.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36'}
+    options.add_argument(f"--user-agent={headers_['User-Agent']}")
+
+    driver = webdriver.Chrome('chromedriver.exe', chrome_options=options)
+    # driver.minimize_window()
+    # driver.set_window_position(-10000, 0)
+    driver.get(url)
+
+    driver.get_screenshot_as_file("screenshot.png")
+
+    # Wait till element is located (maximum 7 seconds)
+    try:
+        elem = WebDriverWait(driver, 7).until(
+            EC.presence_of_element_located((By.ID, "srp-results-list"))
+            # This is a dummy element
+        )
+    except selenium_exec.TimeoutException:
+        print('Selenium Timeout Exception in Science Direct Source scraper')
+        return
+    finally:
+        html = driver.page_source
+        driver.quit()
+
+    soup = BeautifulSoup(html, 'html.parser')
+
+    '''
+    # Impersonate user
+    headers_ = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
+                              'AppleWebKit/537.36 (KHTML, like Gecko) '
+                              'Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE'}
+
+    # Get data via request
+    req = requests.get(url, headers=headers_)
+    soup = BeautifulSoup(req.content, 'lxml')
+    '''
+
+    # Find where all records are in the div
+    records_page = soup.find("div", {"class": "ResultList col-xs-24"})
+
+    records = records_page.find_all("li", {
+        "class": "ResultItem col-xs-24 push-m"})
+
+    results = []
+
+    # Scrape through every record and get the URL alone.
+    for record_wrapper in records:
+        record = record_wrapper.find("div", {
+            "class": "result-item-content"})
+
+        title_heading = record.find("h2").get_text(strip=True)
+        title_data = record.find("a")
+        record_url = title_data['href']
+
+        results.append([title_heading, 'https://www.sciencedirect.com'
+                        + record_url])
+
+    return results
+
+
 # noinspection PyPep8
 def scrape_sci_dir_page(url):
     """ Scrape Science Direct page for first name, last name, qualifications
@@ -132,8 +224,8 @@ def scrape_sci_dir_page(url):
     script = str(script)
 
     # noinspection SpellCheckingInspection,PyPep8,PyPep8,PyPep8
-    pattern = r"(?:\{\"#name\":\"label\",\"_\":\"\w\"\},)*\{\"#name\":\"textfn\",(?:\"\$\":\{\"id\":\"[\w\d]*\"\},)*\"_\":\"(?:[A-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ]*\s*\.*\d*,*-*&*\(*\)*)*\"\}"
-    data_full = re.findall(pattern, script, re.M)
+    pattern = r"(?:\{\"#name\":\"label\",\"_\":\"\w\"\},)*\{\"#name\":\"textfn\",(?:\"\$\":\{\"id\":\"[\w\d]*\"\},)*\"_\":\"(?:[A-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ]*\s*\.*\d*,*-*&*\(*\)*'*)*\"\}"
+    data_full = re.findall(pattern, script[:30000], re.M)
     data_full = set(data_full)
 
     # Map a reference character to each qualification as shown in the page.
@@ -149,7 +241,7 @@ def scrape_sci_dir_page(url):
             qualification['0'] = data[0].split(':')[-1]. \
                 replace('"', '').replace('}', '')
 
-    # print(qualification)
+    print(qualification)
 
     # Start scraping the author window.
     author_group = soup.find("div", {"class": "AuthorGroups text-xs"})
@@ -192,7 +284,7 @@ def scrape_sci_dir_page(url):
 
 
 def scrape_ACM_source(term):
-    """ Scrape the ACM search results page. """
+    """ Scrape the ACM search results page and returns URL. """
 
     # Create URL to scrape.
     term = '+'.join(x for x in term)
