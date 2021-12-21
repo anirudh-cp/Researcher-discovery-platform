@@ -49,7 +49,7 @@ def main():
     for res in results:
         people = scrape_sci_dir_page(res[1])
         for person in people:
-            print(person)
+            # print(person)
             work_book.sheet['Science Direct'].write_line(line, person)
             line += 1
 

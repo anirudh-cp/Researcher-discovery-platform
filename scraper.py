@@ -32,6 +32,7 @@ import selenium.common.exceptions as selenium_exec
 # For helper functions
 import re
 from urllib.parse import quote
+import json
 
 
 def sanitize(text):
@@ -41,7 +42,7 @@ def sanitize(text):
     return data
 
 
-def get_uni(qualification, ref):
+def get_uni_SCOPUS_field(qualification, ref):
     """ Check through all qualifications and return with university term
     for the SCOPUS query. """
 
@@ -53,7 +54,7 @@ def get_uni(qualification, ref):
                 return segment
 
 
-def get_ref(author):
+def get_author_ref(author):
     """ Get references of author to link to appropriate university. """
 
     res = []
@@ -64,7 +65,7 @@ def get_ref(author):
     return res
 
 
-def get_qualifications(qualification, ref):
+def get_qualifications_string(qualification, ref):
     """ Return string with all qualifications. """
 
     out = ''
@@ -221,10 +222,23 @@ def scrape_sci_dir_page(url):
     # Take the data by parsing the javascript code.
 
     script = soup.find('script', {"type": "application/json"})
-    script = str(script)
+    script = script.get_text(strip=True)
+
+    data = json.loads(script)['authors']['affiliations']
+
+    # Map a reference character to each qualification as shown in the page.
+    qualification = {}
+
+    if len(data.keys()) == 1:
+        qualification['0'] = list(data.values())[0]['$$'][0]['_']
+    else:
+        for term in data.values():
+            qualification[term['$$'][0]['_']] = term['$$'][1]['_']
+
 
     # noinspection SpellCheckingInspection,PyPep8,PyPep8,PyPep8
-    pattern = r"(?:\{\"#name\":\"label\",\"_\":\"\w\"\},)*\{\"#name\":\"textfn\",(?:\"\$\":\{\"id\":\"[\w\d]*\"\},)*\"_\":\"(?:[A-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ]*\s*\.*\d*,*-*&*\(*\)*'*)*\"\}"
+    #pattern = r"(?:\{\"#name\":\"label\",\"_\":\"\w\"\},)*\{\"#name\":\"textfn\",(?:\"\$\":\{\"id\":\"[\w\d]*\"\},)*\"_\":\"(?:[A-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ]*\s*\.*\d*,*-*&*\(*\)*'*)*\"\}"
+    '''
     data_full = re.findall(pattern, script[:30000], re.M)
     data_full = set(data_full)
 
@@ -240,8 +254,7 @@ def scrape_sci_dir_page(url):
             # noinspection PyPep8
             qualification['0'] = data[0].split(':')[-1]. \
                 replace('"', '').replace('}', '')
-
-    print(qualification)
+    '''
 
     # Start scraping the author window.
     author_group = soup.find("div", {"class": "AuthorGroups text-xs"})
@@ -254,19 +267,26 @@ def scrape_sci_dir_page(url):
     # qualifications have the term 'university' in them,
     # include in the SCOPUS query.
     for author in author_details:
-        given_name = author.find("span", {"class": "text given-name"}). \
-            get_text(strip=True)
-        surname = author.find("span", {"class": "text surname"}). \
-            get_text(strip=True)
+        try:
+            given_name = author.find("span", {"class": "text given-name"}).\
+                get_text(strip=True)
+        except AttributeError:
+            given_name = ''
+
+        try:
+            surname = author.find("span", {"class": "text surname"}).\
+                get_text(strip=True)
+        except AttributeError:
+            surname = ''
 
         if len(qualification) > 1:
-            ref = get_ref(author)
+            ref = get_author_ref(author)
         else:
             ref = '0'
 
         surname_ = sanitize(surname)
         given_name_ = sanitize(given_name)
-        uni = get_uni(qualification, ref)
+        uni = get_uni_SCOPUS_field(qualification, ref)
 
         # noinspection PyPep8
         if uni is not None:
@@ -278,7 +298,7 @@ def scrape_sci_dir_page(url):
             url = f'https://www.scopus.com/results/authorNamesList.uri?sort=count-f&src=al&sid=77ff2eb1a3f81dea6930fea81b3366ee&sot=al&sdt=al&sl=43&s=AUTHLASTNAME%28{surname_}%29+AND+AUTHFIRST%28{given_name_}%29&st1={surname_}&st2={given_name_}'
 
         results.append([given_name, surname,
-                        get_qualifications(qualification, ref), url])
+                        get_qualifications_string(qualification, ref), url])
 
     return results
 
