@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, request, render_template
 
-from main import main_process
+from legacy.main import main_process
 
 app = Flask(__name__)
 
@@ -26,5 +26,5 @@ def index():
     return render_template('home.html')
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+#if __name__ == '__main__':
+#    app.run(debug=True)
