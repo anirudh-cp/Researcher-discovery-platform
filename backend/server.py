@@ -5,7 +5,7 @@ from SciDir.SciDir.spiders.SciDir_scraper import \
     ScidirScraperSpider as SciDirScraper
 
 import os
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -28,9 +28,11 @@ def main():
     process.start()
 
 
-@app.route('/results', methods=["GET"], strict_slashes=False)
+@app.route('/results', methods=["POST"], strict_slashes=False)
 def main_process():
-    return {'Hello': 'World', 'ABC': 123}
+    query = request.get_json()
+    data = f"{query['query_name']} + {query['page']} + {query['filters']}"
+    return jsonify({"Data": data, "Number": 123}), 201
 
 
 if __name__ == '__main__':

@@ -15,4 +15,4 @@ CMD gunicorn --bind :$PORT --workers 1 --threads 8 server:app
 
 # docker build --tag backend:dependencies -f DockerFileBuild .
 # docker build --tag backend:python -f Dockerfile .
-# docker run -p 8000:8000 -e PORT=8000 --name RDP backend:python
+# docker run --rm -p 8000:8000 -e PORT=8000 --name RDP backend:python
