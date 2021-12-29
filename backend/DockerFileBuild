@@ -1,0 +1,6 @@
+FROM python:3.9-slim
+
+ADD requirements.txt /
+
+# Install Packages
+RUN pip install -r requirements.txt
