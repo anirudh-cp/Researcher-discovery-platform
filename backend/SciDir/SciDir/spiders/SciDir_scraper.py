@@ -90,7 +90,7 @@ class ScidirScraperSpider(scrapy.Spider):
 
         # print(qualification)
 
-        for author in author_tile:
+        for index, author in enumerate(author_tile):
             # first_name = author.css('.given-name::text').extract_first()
             first_name = author.xpath('span/span[@class="text given-name"]/text()').extract_first()
             first_name = '' if not first_name else first_name
@@ -106,11 +106,21 @@ class ScidirScraperSpider(scrapy.Spider):
             else:
                 ref = '0'
 
+            link = ''
+            qualifications = self.get_qualifications_string(qualification, ref)
+
+            ''' 
+            try:
+                SCOPUS_ID = self.parse_scopus(index)
+                link = f'https://www.scopus.com/authid/detail.uri?authorId={SCOPUS_ID}'
+
+                orcID, citations, hIndex = self.parse_scopus_page(link)
+            except:
+            '''
+
             first_name_sanitized = self.sanitize(first_name)
             last_name_sanitized = self.sanitize(last_name)
             uni = self.get_uni_SCOPUS_field(qualification, ref)
-
-            qualifications = self.get_qualifications_string(qualification, ref)
 
             # noinspection PyPep8
             if uni is not None:
@@ -124,6 +134,12 @@ class ScidirScraperSpider(scrapy.Spider):
             yield {'First Name': first_name, 'Last Name': last_name,
                    'Qualifications': qualifications, 'Link': link}
 
+    def parse_scopus(self, index):
+        return scrapy.Request(f'https://www.sciencedirect.com/sdfe/arp/pii/S0168160516303300/author/{index+1}/articles',
+                              callback=self.parse_scopus_request)
+
+    def parse_scopus_request(self, response):
+        yield response.json()['scopusAuthorId']
 
     @staticmethod
     def sanitize(text):

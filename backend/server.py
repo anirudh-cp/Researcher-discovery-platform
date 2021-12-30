@@ -13,19 +13,21 @@ cors = CORS(app)
 
 
 def main():
-    search_terms = input('Enter search term : ').split()
-    # term = ['Apple', 'ice']
+    # search_terms = input('Enter search term : ').split()
+    search_terms = ['Machine', 'Learning']
 
     ACMScraper.search_term = search_terms
-    SciDirScraper.search_term = search_terms
+    # SciDirScraper.search_term = search_terms
 
     process = CrawlerProcess()
 
     process.crawl(ACMScraper)
-    process.crawl(SciDirScraper)
+    # process.crawl(SciDirScraper)
 
     # the script will block here until the crawling is finished
     process.start()
+
+    print(ACMScraper.pointer)
 
 
 @app.route('/results', methods=["POST"], strict_slashes=False)
@@ -44,4 +46,5 @@ def main_process():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+    main()
+    # app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))

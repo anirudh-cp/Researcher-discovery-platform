@@ -7,28 +7,44 @@ class AcmScraperSpider(scrapy.Spider):
 
     # To define the search term used for the results page
     search_term = None
+    # The actual term used in the URL
+    term = None
     # To create the initial requests for the spider
     start_urls = []
+    # Max number of records needed
+    MAX_YIELD = 5
+    # Count of number of records generated
+    yield_count = 0
+    # Internal pointer
+    pointer = {'page': 0, 'article': 0, 'person': 0, 'Done': False}
+    # Links to be scraped
+    links = []
 
-    custom_settings = {'FEED_URI': "ACM.csv",
-                       'FEED_FORMAT': 'csv'}
+    custom_settings = {'FEED_URI': "stdout:", 'FEED_FORMAT': 'csv'}
 
     def __init__(self):
         super().__init__()
-        term = '+'.join(x for x in self.search_term)
+        self.term = '+'.join(x for x in self.search_term)
+        self.yield_count = 0
         self.start_urls.append(
-            f'https://dl.acm.org/action/doSearch?AllField={term}&startPage=0&ContentItemType=research-article')
+            f'https://dl.acm.org/action/doSearch?AllField={self.term}&startPage={self.pointer["page"]}&ContentItemType=research-article')
 
     def parse(self, response, **kwargs):
-        links = response.css(".hlFld-Title").xpath('a/@href').extract()
-        yield from response.follow_all(links, self.parse_page)
-        # for link in links:
-        #     yield {'links': link}
+        self.links = response.css(".hlFld-Title").xpath('a/@href').extract()
+        url = 'https://dl.acm.org' + self.links[self.pointer['article']]
+        yield response.follow(url, callback=self.parse_page)
 
     def parse_page(self, response):
         # title = response.css(".citation__title").extract_first()
+        self.pointer['person'] = 0
         author_tile = response.css('.loa__item')
         for author in author_tile:
+            self.yield_count += 1
+            self.pointer['person'] += 1
+            if self.yield_count > self.MAX_YIELD:
+                self.pointer['Done'] = True
+                break
+
             name = author.xpath('a/@title').extract_first()
             first_name = name.split(' ', 1)[0]
             last_name = name.split(' ', 1)[1]
@@ -44,3 +60,15 @@ class AcmScraperSpider(scrapy.Spider):
             # print(first_name, last_name, link, qualifications)
             yield {'First Name': first_name, 'Last Name': last_name,
                    'Qualifications': qualifications, 'Link': link}
+
+        if not self.pointer['Done']:
+            self.pointer['article'] += 1
+            if self.pointer['article'] != len(self.links):
+                next_url = 'https://dl.acm.org' + self.links[
+                    self.pointer['article']]
+                yield response.follow(next_url, callback=self.parse_page)
+            else:
+                self.pointer['article'] = 0
+                self.pointer['page'] += 1
+                next_url = f'https://dl.acm.org/action/doSearch?AllField={self.term}&startPage={self.pointer["page"]}&ContentItemType=research-article'
+                yield response.follow(next_url, callback=self.parse)
