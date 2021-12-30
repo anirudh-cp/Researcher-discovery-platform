@@ -3,7 +3,11 @@ import { QueryContext } from '../Contexts/QueryContext';
 import { useNavigate } from 'react-router';
 
 import APIService from '../API/APIService';
-import Temp from './Temp';
+
+import SearchBanner from './SearchBanner';
+import Filters from './Filters';
+import ResultsPage from './ResultsPage';
+import ResultsLoading from './ResultsLoading';
 
 
 const Results = () => {
@@ -11,26 +15,36 @@ const Results = () => {
     const [page, setPage] = useState(0)
     const [filters, setFilters] = useState("None")
 
+    const API = new APIService();
     const navigate = useNavigate();
 
     const [load, setLoad] = useState(true)
 
     const { query_name } = useContext(QueryContext)
-    const API = new APIService()
-    
+
     useEffect(() => {
-        if (query_name === "")
-            navigate('/')
+        // if (query_name === "")
+        //    navigate('/')
 
         setLoad(true)
-        API.GetResults({ query_name, page, filters }).then(response => setResults(response)).catch(error => console.log(error));
-        setLoad(false)
+        API.GetResults({ query_name, page, filters }).then(response => setResults(response.records)).catch(error => console.log(error));
+        // API.GetResults({ query_name, page, filters }).then(response => console.log(response)).catch(error => console.log(error));
+        setLoad(false)        
     }, [])
 
     return (
         <div>
-            <p>In results page.</p>
-            {load ? <h1>Loading</h1>: <Temp results={results} />}
+            <SearchBanner query_name={query_name} />
+            <div className='main_container form_wrap'>
+                <div className='form_wrap grid'>
+                    <div>
+                        <Filters />
+                    </div>
+                    <div>
+                        {load==true ? <ResultsLoading /> : <ResultsPage results={results} />}
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

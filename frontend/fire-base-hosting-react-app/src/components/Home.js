@@ -1,13 +1,12 @@
 import React from 'react'
 
+import HomeBanner from './HomeBanner'
 import HomeInput from './HomeInput'
 
 const Home = () => {
     return (
         <div>
-            <div className='home_banner'>
-                <h1 className='home_banner_heading'>Welcome</h1>
-            </div>
+            <HomeBanner />
             <div className='main_container'>
                 <HomeInput />
             </div>

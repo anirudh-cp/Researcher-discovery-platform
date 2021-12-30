@@ -87,3 +87,133 @@
   width: 100%;
   display: flex;
 }
+
+.search_banner {
+  background-image: url('assets/search-banner.png');
+  background-position: 0px 0px;
+  background-size: contain;
+  background-attachment: scroll;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  display: table;
+  width: 100%;
+}
+
+.search_banner_heading {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 38px;
+  color: white;
+  width: fit-content;
+  display: table;
+  margin-left: 40px;
+  margin-top: 0%;
+  margin-bottom: 0%;
+}
+
+.search_banner_text_box {
+  margin-right: 40px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+}
+
+.search_banner_text {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  margin:0%;
+  display: inline-block; 
+}
+
+.column {
+  position:relative;
+  width:100%;
+  min-height:1px;
+  padding-left:10px;
+  padding-right:10px;
+}
+
+.grid{
+  display: -ms-grid;
+  display: grid;
+  grid-column-gap: 25px;
+  -ms-grid-columns: 3fr 9fr;
+  grid-template-columns: 3fr 9fr;
+  -ms-grid-rows: auto;
+  grid-template-rows: auto;
+}
+
+.list {
+  padding-left:0;
+  list-style:none
+}
+
+.result_item {
+  padding: 15px;
+}
+
+.name {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 22px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700px;
+}
+
+.qual {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.actions {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 0px;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.result_button {
+  border-radius: 5px;
+  font-style: normal;
+  background-color: #005c97;
+  color: #ffffff;
+  padding: 9px 15px 9px 15px;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400px;
+}
+
+.loader {
+  background-image: url('assets/loading.gif');
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  padding-bottom: 30px;
+  padding-top: 15px;
+}
+
+.load_text {
+  text-align: center;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+  margin-top: 20px;
+}

@@ -31,8 +31,16 @@ def main():
 @app.route('/results', methods=["POST"], strict_slashes=False)
 def main_process():
     query = request.get_json()
-    data = f"{query['query_name']} + {query['page']} + {query['filters']}"
-    return jsonify({"Data": data, "Number": 123}), 201
+
+    # data = f"{query['query_name']} + {query['page']} + {query['filters']}"
+    # return jsonify({"Data": data, "Number": 123}), 201
+
+    data = {"query_name": query["query_name"], "page": query["page"],
+            "filters": query["filters"], "records": []}
+    for i in range(10):
+        data["records"].append({"first_name": "ABC", "last_name": "XYZ", "qual": "QWERTY", "key": i})
+
+    return jsonify(data), 201
 
 
 if __name__ == '__main__':
