@@ -20,8 +20,6 @@ class AcmScraperSpider(scrapy.Spider):
     # Links to be scraped
     links = []
 
-    custom_settings = {'FEED_URI': "stdout:", 'FEED_FORMAT': 'csv'}
-
     def __init__(self):
         super().__init__()
         self.term = '+'.join(x for x in self.search_term)
