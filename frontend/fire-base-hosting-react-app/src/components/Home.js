@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 
 import HomeBanner from './HomeBanner'
 import HomeInput from './HomeInput'
+
 
 const Home = () => {
     return (

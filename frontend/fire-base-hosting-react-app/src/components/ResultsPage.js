@@ -11,7 +11,10 @@ const ResultsPage = ({ results }) => {
                         <h3 className="name">{obj.first_name} {obj.last_name}</h3>
                         <p className="qual">{obj.qual}</p>
                         <div className="actions">
-                            <button className='result_button'>View Profile</button>
+                            <button className='result_button' onClick={(e) => {
+                                e.preventDefault();
+                                window.location.href = `//${obj.link}`;
+                            }}>View Profile</button>
                         </div>
                     </li>)
                 })}

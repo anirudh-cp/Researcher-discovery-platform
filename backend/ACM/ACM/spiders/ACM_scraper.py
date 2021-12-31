@@ -34,14 +34,16 @@ class AcmScraperSpider(scrapy.Spider):
 
     def parse_page(self, response):
         # title = response.css(".citation__title").extract_first()
-        self.pointer['person'] = 0
+        
         author_tile = response.css('.loa__item')
+        author_tile = author_tile[(self.pointer['person']) : ]
+        
         for author in author_tile:
             self.yield_count += 1
-            self.pointer['person'] += 1
             if self.yield_count > self.MAX_YIELD:
                 self.pointer['Done'] = True
                 break
+            self.pointer['person'] += 1
 
             name = author.xpath('a/@title').extract_first()
             first_name = name.split(' ', 1)[0]
@@ -56,16 +58,20 @@ class AcmScraperSpider(scrapy.Spider):
             qualifications = '' if not qualifications else qualifications
 
             # print(first_name, last_name, link, qualifications)
-            yield {'First Name': first_name, 'Last Name': last_name,
-                   'Qualifications': qualifications, 'Link': link}
+            #self.results.append({'First Name': first_name, 'Last Name': last_name,
+            #                     'Qualifications': qualifications, 'Link': link})
+
+            yield {'first_name': first_name, 'last_name': last_name,
+                   'qual': qualifications, 'link': link, 'key': self.yield_count}
 
         if not self.pointer['Done']:
             self.pointer['article'] += 1
             if self.pointer['article'] != len(self.links):
-                next_url = 'https://dl.acm.org' + self.links[
-                    self.pointer['article']]
+                next_url = 'https://dl.acm.org' + self.links[self.pointer['article']]
+                self.pointer['person'] = 0
                 yield response.follow(next_url, callback=self.parse_page)
             else:
+                self.pointer['person'] = 0
                 self.pointer['article'] = 0
                 self.pointer['page'] += 1
                 next_url = f'https://dl.acm.org/action/doSearch?AllField={self.term}&startPage={self.pointer["page"]}&ContentItemType=research-article'

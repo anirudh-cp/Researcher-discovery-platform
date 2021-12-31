@@ -217,3 +217,25 @@
   margin-bottom: 5px;
   margin-top: 20px;
 }
+
+.page_bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.page_bar_button {
+  border-radius: 5px;
+  font-style: normal;
+  border-color: #005c97;
+  background-color: #fff;
+  padding: 7px 10px 7px 10px;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400px;
+}
+
+.page_detail_text {
+  font-size: 15px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700px;
+}
