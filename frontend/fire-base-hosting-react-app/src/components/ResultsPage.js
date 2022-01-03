@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react'
 
+import NoResults from './NoResults'
+
 const ResultsPage = ({ results }) => {
 
     return (
         <div>
             <ul role="list" className="container list">
-
-                {results.map(obj => {
-                    return (<li key={obj.key} className="result_item item_box">
-                        <h3 className="name">{obj.first_name} {obj.last_name}</h3>
-                        <p className="qual">{obj.qual}</p>
-                        <div className="actions">
-                            <button className='result_button' onClick={(e) => {
-                                e.preventDefault();
-                                window.location.href = `//${obj.link}`;
-                            }}>View Profile</button>
-                        </div>
-                    </li>)
-                })}
-
+                {(results.length === 0) ? <NoResults /> :
+                    results.map(obj => {
+                        return (<li key={obj._id} className="result_item item_box">
+                            <h3 className="name">{obj.name}</h3>
+                            {obj.orcid !== '-1' ? <p className='orcid'>Orcid: {obj.orcid}</p> : <></>}
+                            {obj.cite !== '-1' ? <p className='details'>Citations: {obj.cite}</p> : <></>}
+                            {obj.hindex !== '-1' ? <p className='details'>H-Index: {obj.hindex}</p> : <></>}
+                            <p className="qual">{obj.qual}</p>
+                            <div className="actions">
+                                <a href={`//${obj.link}'`}> 
+                                    <button className='result_button'>View Profile</button>
+                                </a>
+                            </div>
+                        </li>)
+                    })
+                }
             </ul>
 
         </div>

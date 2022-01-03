@@ -11,6 +11,7 @@ const Home = () => {
             <div className='main_container'>
                 <HomeInput />
             </div>
+            
         </div>
     )
 }
