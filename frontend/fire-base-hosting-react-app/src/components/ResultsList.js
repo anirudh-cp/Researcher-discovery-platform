@@ -15,7 +15,7 @@ const ResultsList = ({ results }) => {
                     {
                         results.map(obj => {
                             return (<tr key={obj._id} className="table_row">
-                                <th className='table_data table_name' style={{ width: "40%" }}>{obj.name}</th>
+                                <th className='table_data table_name' style={{ width: "40%" }}>{obj.honorifics} {obj.name}</th>
                                 <th className='table_data' style={{ width: "20%", textAlign:"left" }}>{obj.orcid !== '-1' ? obj.orcid : <></>}</th>
                                 <th className='table_data' style={{ width: "15%" }}>{obj.cite !== '-1' ? obj.cite : <></>}</th>
                                 <th className='table_data' style={{ width: "15%" }}>{obj.hindex !== '-1' ? obj.hindex : <></>}</th>

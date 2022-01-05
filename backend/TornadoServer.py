@@ -69,6 +69,7 @@ class ResultPageRequestHandler(web.RequestHandler):
         pageTotal = data['pageTotal']
         # data = {"Data": f"{self.query_name} + {self.page} + {self.filters}"}
 
+        query_name = query_name.lower()
         results = []
         result_fields = {'name':1, 'qual':1, 'cite':1, 'hindex':1, 'orcid':1, 'link':1,'_id':1}
         order = -1 if order == "Descending" else 1
@@ -116,7 +117,4 @@ def main():
 
 
 if __name__ == '__main__':
-
-    # TODO: Create insights
-
     main()

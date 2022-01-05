@@ -20,7 +20,7 @@ const AppliedFilters = ({ title, load, data, setData, APIData, styleOuter, style
                 ? [...prev, value]
                 : prev.filter(val => val !== value)
         );
-        APIData();
+
     }
 
     return (

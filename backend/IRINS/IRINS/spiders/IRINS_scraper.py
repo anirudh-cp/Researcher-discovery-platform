@@ -1,6 +1,8 @@
-import scrapy
-import json
+import re
+from nameparser import HumanName
+
 import nltk
+import scrapy
 
 
 class IrinsScraperSpider(scrapy.Spider):
@@ -17,10 +19,11 @@ class IrinsScraperSpider(scrapy.Spider):
         }
     }
 
-    last_page_index = 20
+    last_page_index = 400
+    start_page_index = 101
 
     def start_requests(self):
-        for page in range(1, self.last_page_index + 1):
+        for page in range(self.start_page_index, self.last_page_index + 1):
             next_url = 'https://irins.org/irins/a/searchc/search'
             form_data = {
                 'field': 'all',
@@ -45,17 +48,32 @@ class IrinsScraperSpider(scrapy.Spider):
 
     def parse_person(self, response):
         name = response.xpath('//div[@class="profile-blog br1"]/ul/li/h1/strong/text()').extract_first()
-        name = " ".join(name.split())
+        name_data = " ".join(name.split())
+        name_list = HumanName(name_data).as_dict()
+
+        name = ''
+        honorific = name_list['title']
+        for item in name_list.items():
+            if item[1] != '' and item[0] != 'title':
+                name = name + (item[1]) + ' '
+
         qual = response.xpath('//div[@class="profile-blog br1"]/ul/li[3]/text()').extract_first().rstrip()
         qual = " ".join(qual.split())
 
         expertise = response.xpath('//div[@id="expertise-view"]/div/h5/text()').extract_first()
-        expertise = [word for (word, pos) in nltk.pos_tag(nltk.word_tokenize(expertise)) if pos[0] == 'N']
+        expertise = [word.lower() for (word, pos) in nltk.pos_tag(nltk.word_tokenize(expertise)) if pos[0] == 'N']
 
         citations = response.xpath('//div[@class="Cell-citation br1"]/div[2]/span/text()').extract_first()
         hindex = response.xpath('//div[@class="Cell-citation br1"]/span/text()').extract_first()
 
+        link = ''
         orcid = response.xpath('//div[@id="identity-view"]/ul/li/div/span[2]/small/a/text()').extract_first()
+        if not re.match(r"(\d{4}-){3}(\d{4})", orcid):
+            orcid = ''
+            link = response.url
+        else:
+            link = 'https://orcid.org/' + orcid
 
-        yield {'name': name, 'qual': qual, 'exp':expertise, 'cite': citations,
-               'hindex': hindex, 'orcid': orcid, 'link': response.url}
+        yield {'name': name, 'honorific': honorific, 'qual': qual,
+               'exp':expertise, 'cite': citations,
+               'hindex': hindex, 'orcid': orcid, 'link': link}

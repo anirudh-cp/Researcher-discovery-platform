@@ -14,10 +14,10 @@ const Filters = ({ setSort, filters, setFilters, setOrder, APIData, load }) => {
         APIData();
     }
 
-    const handleClear = (event) => {
+    const handleClear = async (event) => {
         event.preventDefault();
-        setFilters([]);
-        APIData();
+        await setFilters([]);
+        await APIData();
     }
 
     useEffect(() => {
