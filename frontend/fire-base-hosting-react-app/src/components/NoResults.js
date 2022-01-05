@@ -3,7 +3,7 @@ import React from 'react'
 const NoResults = () => {
     return (
         <div className='result_item item_box'>
-            <p className='load_text'>No results found.</p>
+            <p className='no_results'>No results found.</p>
         </div>
     )
 }

@@ -1,17 +1,13 @@
 import React, {useEffect, useState} from 'react'
 
 import HomeBanner from './HomeBanner'
-import HomeInput from './HomeInput'
-
+import HomePageContent from './HomePageContent'
 
 const Home = () => {
     return (
         <div>
             <HomeBanner />
-            <div className='main_container'>
-                <HomeInput />
-            </div>
-            
+            <HomePageContent />
         </div>
     )
 }

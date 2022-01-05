@@ -21,7 +21,7 @@ class ResultPageRequestHandler(web.RequestHandler):
 
     def dynamic_scraper(self, query_name, page):
         new = False
-        if page == -1:  # Erase pointers if new query
+        if page == 0:  # Erase pointers if new query
             self.page_pointers['ACM'] = self.page_pointers['ACM'][:1]
             ACMScraper.pointer = self.page_pointers['ACM'][-1].copy()
             page = 1
@@ -66,12 +66,13 @@ class ResultPageRequestHandler(web.RequestHandler):
         filters = data['filters']
         sort = data['sort']
         order = data['order']
+        pageTotal = data['pageTotal']
         # data = {"Data": f"{self.query_name} + {self.page} + {self.filters}"}
 
         results = []
         result_fields = {'name':1, 'qual':1, 'cite':1, 'hindex':1, 'orcid':1, 'link':1,'_id':1}
         order = -1 if order == "Descending" else 1
-        page = 1 if page == -1 else page
+        page = 1 if page == 0 else page
 
         if 'ACM' in filters:
             results = self.dynamic_scraper(query_name, page)
@@ -81,7 +82,7 @@ class ResultPageRequestHandler(web.RequestHandler):
             if filters:
                 query['qual'] = {'$in': filters}
 
-            initial, final = (page-1)*5, page*5
+            initial, final = (page-1)*pageTotal, page*pageTotal
             if sort == "Sort by H-Index":
                 results = exact = self.collection.find(query, result_fields).sort('hindex', order).skip(initial).limit(final)
             elif sort == "Sort by Citations":

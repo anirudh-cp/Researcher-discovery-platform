@@ -15,7 +15,7 @@ const HomeInput = () => {
 
     return (
         <div>
-            <form className="item_box" onSubmit={handleSubmit}>
+            <form style={{marginBottom: "10px"}} onSubmit={handleSubmit}>
                 <div className='form_wrap'>
                     <input type="text" id="query" placeholder="Enter a Domain" 
                     className="home_input flex-grow-1"

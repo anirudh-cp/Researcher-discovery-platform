@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 
-const AppliedFilters = ({ title, load, data, setData, styleOuter, styleInner }) => {
+const AppliedFilters = ({ title, load, data, setData, APIData, styleOuter, styleInner }) => {
     const [localData, setLocalData] = useState([])
 
     useEffect(() => {
@@ -20,6 +20,7 @@ const AppliedFilters = ({ title, load, data, setData, styleOuter, styleInner }) 
                 ? [...prev, value]
                 : prev.filter(val => val !== value)
         );
+        APIData();
     }
 
     return (

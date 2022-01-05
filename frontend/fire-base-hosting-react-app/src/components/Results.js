@@ -14,10 +14,12 @@ import PageDetails from './PageDetails'
 
 const Results = () => {
     const [results, setResults] = useState([])
-    const [page, setPage] = useState(-1)
+    const [page, setPage] = useState(0)
     const [filters, setFilters] = useState([])
     const [sort, setSort] = useState("Sort by H-Index")
     const [order, setOrder] = useState("Descending")
+    const [pageTotal, setPageTotal] = useState(5);
+    const [pageView, setPageView] = useState("Tile");
 
     const API = new APIService();
     const navigate = useNavigate();
@@ -28,21 +30,13 @@ const Results = () => {
 
     const APIData = async () => {
         setLoad(true);
-        const response = await API.GetResults({ query_name, page, filters, sort, order }).then(response => {
+        const response = await API.GetResults({ query_name, page, pageTotal, filters, sort, order }).then(response => {
             setResults(response.records);
             setPage(response.page);
         }).catch(error => console.log(error));
         setLoad(false);
     }
 
-    const APIData_filter = async (event) => {
-        event.preventDefault()
-        const response = await API.GetResults({ query_name, page, filters, sort, order }).then(response => {
-            setResults(response.records);
-            setPage(response.page);
-        }).catch(error => console.log(error));
-        setLoad(false);
-    }
 
     useEffect(() => {
         if (query_name === "")
@@ -64,8 +58,9 @@ const Results = () => {
                         APIData={APIData} load={load}/>
                     </div>
                     <div>
-                        <PageDetails page={page} load={load}/>
-                        {load ? <ResultsLoading /> : <ResultsPage results={results} />}
+                        <PageDetails page={page} load={load} setPage={setPage} 
+                        pageTotal={pageTotal} setPageTotal={setPageTotal} pageView={pageView} setPageView={setPageView}/>
+                        {load ? <ResultsLoading /> : <ResultsPage results={results} pageView={pageView}/>}
                         <MovePage page={page} setPage={setPage} load={load} results={results}/>
                     </div>
                 </div>
