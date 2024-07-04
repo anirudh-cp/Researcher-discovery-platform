@@ -1,0 +1,17 @@
+data stories
+API
+seperate modules
+dev tool for module creation
+user types
+clean code
+good dataset
+
+
+Kubernettes
+Scale with modules
+web indexing forums
+https://blog.scholasticahq.com/post/index-types-for-academic-journal/
+https://www.springer.com/journal/11036
+https://www.scimagojr.com/
+
+Hello all! This is a simple action plan for now. It does need changes and updates, but these are the major points I think. The first sheet is a description of all the indexing services in the paper sir shared in the meet. The second page is the action plan for now.

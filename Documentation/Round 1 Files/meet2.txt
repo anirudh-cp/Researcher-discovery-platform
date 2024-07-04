@@ -1,0 +1,14 @@
+Min viable product
+Input -> Reasercher
+Google scholar, 
+Indexing Forum: scopus, IEEE, Science Direct, Springer
+String macth
+
+Take video
+
+Ouput programs single page: Scholar, Scopus, Carnegie Melon
+
+No storage
+
+Nodejs
+Kubernet, Docker

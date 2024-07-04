@@ -1,0 +1,37 @@
+Find researchers in given domain
+Public data, no single point for specific person
+Uni may have own data base .edu
+basic string search, text mining
+need cloud platform, Azure, AWS ect
+learn text mining, cloud searching
+logic works in cloud
+
+
+Text Mining:
+============
+Process of transforming unstruc text to struc format by ident patterns
+naive bayes, support vector machine
+
+struc: Row, col
+Unstruc: No predef format
+Semi Struc: Blend, XML, JSON, HTML
+
+Text preprocess: 
+Clean, transform to usable NLP -> Text mining -> Analysis
+
+
+Techniques:
+-----------
+Forms of data mining, fall under textual data analysis
+
+Info Retrival: 
+Return relevant info based on predef query, Tokenization (split text), Stemming (Sperate prefix, suffix to get meaning)
+
+NLP:
+Summarize, Part of Speech (PoS) tagging (tag, noun, verb), Text categorization (synonyms, abbr), sentiment analysis (+/-)
+
+Info Extract:
+Feature selection (imp features select), Feature extract (select subset of features to improve acc of class task), Named-entity recognition (Categorize)
+
+Data mining:
+Extract insights using patterns, bring struc

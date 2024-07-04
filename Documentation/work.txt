@@ -1,0 +1,23 @@
+*Math 3 sums
+*ToC 5 sections
+*DSA lab question
+*SWE SRS
+*N&C Network subdivide code
+
+App:
+Load screen
+Regex update
+Table elmement update
+Another scraper?
+
+ This is a GRADED ASSIGNMENT.
+You are supposed to write a user interactive program that can construct a Binary Search Tree from the sequence of elements that are given as input by the user. The program requirements are as follows.
+Get a sequence of numbers as input
+Convert the sequence of number to Binary search tree
+Preferably, you can use linked list representation for BST
+Write Three functions, Inorder, Preorder, and PostOrder that can perform the corresponding operation on the tree. 
+Display the result of each traversal and it’s respective complexity. 
+
+Submission Instruction: 
+ You are supposed to upload a word file with your source code and output screen. 
+Your source code should be well commented on what is happening and how your approach works

@@ -30,7 +30,7 @@ const Results = () => {
 
     const APIData = async () => {
         setLoad(true);
-        console.log(filters)
+        console.log(sort);
         const response = await API.GetResults({ query_name, page, pageTotal, filters, sort, order }).then(response => {
             setResults(response.records);
             setPage(response.page);

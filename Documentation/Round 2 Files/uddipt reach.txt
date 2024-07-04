@@ -1,0 +1,12 @@
+Hello Mr Uddipt! I am Anirudh, Mr Prashant's son. We spoke many months ago when you were helping me select a college. Thank you for that!
+
+I recently participated in this contest by IIT Bombay called Techfest, where we had to create an application that when given a domain name, it would return the names, qualifications and other relevant details of the researches with knowledge in that specific domain.
+
+I implemented a basic version, and my team has now been selected to implement a final version and present the application before a panel of judges.
+
+Since you have the relevant experience in this domain of data collection and manipulation, could you please assist me in any way by providing me with a few tips on where I can take this project.
+
+If you are free anytime could we meet up in a call to discuss how to continue this project.
+
+Regards,
+Anirudh
