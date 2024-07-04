@@ -3,6 +3,7 @@ scrapydo.setup()
 
 from tornado import web, ioloop
 import json
+import os
 
 from ACM.ACM.spiders.ACM_scraper import AcmScraperSpider as ACMScraper
 from pymongo import MongoClient
@@ -14,8 +15,8 @@ class ResultPageRequestHandler(web.RequestHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.client = MongoClient(
-            'mongodb+srv://python:pythonpass@datacluster.8ohor.mongodb.net/RDP_DB?retryWrites=true&w=majority')
+        mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/mydatabase')
+        self.client = MongoClient(mongo_uri)
         self.db = self.client.get_database('RDP_DB')
         self.collection = self.db.irins
 
@@ -47,10 +48,16 @@ class ResultPageRequestHandler(web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Content-Type", 'application/json')
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "content-type")
+        # self.set_header("Access-Control-Allow-Origin", "*")
+        #self.set_header("Access-Control-Allow-Headers", "content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PATCH, PUT')
-    
+        
+        self.set_header("Access-Control-Allow-Origin", "http://localhost:3000")
+        # self.set_header("Access-Control-Allow-Headers", "Content-Type")
+        #self.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.set_header("Access-Control-Allow-Headers", "access-control-allow-origin,authorization,content-type")
+
+
     def options(self):
         # no body
         self.set_status(204)

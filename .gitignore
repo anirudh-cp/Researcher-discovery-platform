@@ -5,6 +5,7 @@
 /venv
 /Outputs
 __pycache__/
+env
 
 # dependencies
 /frontend/fire-base-hosting-react-app/node_modules

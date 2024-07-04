@@ -9,6 +9,8 @@ from itemadapter import ItemAdapter
 
 from pymongo import MongoClient
 from bson import json_util
+import os
+
 
 class IrinsPipeline:
     client = None
@@ -16,7 +18,8 @@ class IrinsPipeline:
     collection = None
 
     def __init__(self):
-        self.client = MongoClient('mongodb+srv://python:pythonpass@datacluster.8ohor.mongodb.net/RDP_DB?retryWrites=true&w=majority')
+        mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/mydatabase')
+        self.client = MongoClient(mongo_uri)
         self.db = self.client.get_database('RDP_DB')
         self.collection = self.db.irins
 

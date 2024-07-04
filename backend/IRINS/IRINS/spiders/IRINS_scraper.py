@@ -19,8 +19,8 @@ class IrinsScraperSpider(scrapy.Spider):
         }
     }
 
-    last_page_index = 400
-    start_page_index = 101
+    last_page_index = 100
+    start_page_index = 1
 
     def start_requests(self):
         for page in range(self.start_page_index, self.last_page_index + 1):

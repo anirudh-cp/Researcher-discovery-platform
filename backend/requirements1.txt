@@ -1,0 +1,5 @@
+scrapy==2.5.1
+selenium==4.1.0
+urllib3==1.26.7
+scrapydo==0.2.2
+tornado==6.1

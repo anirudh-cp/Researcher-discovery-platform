@@ -1,7 +1,11 @@
 class APIService {
     
     async GetResults(body) {
-        const response = await fetch('http://localhost:8000/results', {
+        const apiUrl = process.env.REACT_APP_API_URL;
+
+        console.log(apiUrl);
+        console.log(process.env)
+        const response = await fetch(apiUrl + '/results', {
             'method': 'POST',
             headers: {
                 'Content-Type': 'application/json'
